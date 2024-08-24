@@ -1,0 +1,62 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplier Plot</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/plotter.css' %}">
+    <!-- Custom JavaScript -->
+    <script src="{% static 'urjs/plotter.js' %}"></script>
+</head>
+<body class="container my-4">
+    <!-- Theme Toggle Switch -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3">Generate a Plot with a Multiplier</h1>
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="theme-switch">
+            <label class="form-check-label" for="theme-switch">Toggle Dark/Light Theme</label>
+        </div>
+    </div>
+
+    <!-- Form to capture user input -->
+    <form id="plotForm" method="post" class="mb-4 p-4 bg-light rounded shadow-sm">
+        {% csrf_token %}
+
+        <!-- Multiplier input field and its label -->
+        <div class="mb-3">
+            <label for="id_multiplier" class="form-label">Multiplier:</label>
+            <input type="number" name="multiplier" id="id_multiplier" value="{{ form.multiplier.value }}" step="any" class="form-control">
+            {% if form.multiplier.errors %}
+                <div class="alert alert-danger mt-2">{{ form.multiplier.errors.as_text }}</div>
+            {% endif %}
+        </div>
+
+        <!-- Dropdown for selecting the output format (PNG or SVG) -->
+        <div class="mb-3">
+            <label for="id_format" class="form-label">Output Format:</label>
+            <select name="format" id="id_format" class="form-select" onchange="formatChanged()">
+                {% for value, display in form.format.field.choices %}
+                    <option value="{{ value }}" {% if form.format.value == value %}selected{% endif %}>{{ display }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </form>
+
+    <h2 class="h5 mb-3">Plot:</h2>
+    <!-- Container for the plot; only this section will be updated -->
+    <div id="plot-container" class="p-4 bg-white rounded shadow-sm">
+        {% if plot_url %}
+            <img src="{{ plot_url }}" alt="Generated Plot" class="img-fluid rounded">
+        {% else %}
+            <p class="text-muted">No plot available. Please enter a multiplier to see the plot.</p>
+        {% endif %}
+    </div>
+
+    <!-- Bootstrap JS (for potential Bootstrap components) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
