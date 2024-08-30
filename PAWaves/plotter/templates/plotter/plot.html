@@ -1,60 +1,127 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multiplier Plot</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
+    <title>Custom Layout</title>
     <link rel="stylesheet" href="{% static 'css/plotter.css' %}">
-    <!-- Custom JavaScript -->
-    <script src="{% static 'urjs/plotter.js' %}"></script>
+    <script src="{% static 'js/plotter.js' %}"></script>
+    <script async="" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML" type="text/javascript"></script>
 </head>
-<body class="container my-4">
-    <!-- Theme Toggle Switch -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3">Generate a Plot with a Multiplier</h1>
-        <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="theme-switch">
-            <label class="form-check-label" for="theme-switch">Toggle Dark/Light Theme</label>
-        </div>
-    </div>
 
-    <!-- Form to capture user input -->
-    <form id="plotForm" method="post" class="mb-4 p-4 bg-light rounded shadow-sm">
+<body>
+    <!-- Form Container -->
+    <form id="plotForm" method="post">
         {% csrf_token %}
-
-        <!-- Multiplier input field and its label -->
-        <div class="mb-3">
-            <label for="id_multiplier" class="form-label">Multiplier:</label>
-            <input type="number" name="multiplier" id="id_multiplier" value="{{ form.multiplier.value }}" step="any" class="form-control">
-            {% if form.multiplier.errors %}
-                <div class="alert alert-danger mt-2">{{ form.multiplier.errors.as_text }}</div>
+        <div class="container">
+            <div class="column large">
+                <div class="section small">
+                    <label for="id_ibias">\[I_{bias}\]</label>
+                    {{ form.ibias }}
+                    
+                    <label for="id_isig">\[I_{signal}\]</label>
+                    {{ form.isig }}
+                    
+                </div>
+                <div class="section large">
+                    <!-- First row: empty element and 3 text labels -->
+                    <div class="row">
+                        <div></div>
+                        <label for="input8">\[V_1\]</label>
+                        <label for="input9">\[V_2\]</label>
+                        <label for="input10">\[V_3\]</label>
+                    </div>
+                    <!-- Second row: 1 text label and 3 form boxes -->
+                    <div class="row">
+                        <label for="input8">\[Magnitude\]</label>
+                        {{ form.mag_v1 }}
+                        {{ form.mag_v2 }}
+                        {{ form.mag_v3 }}
+                    </div>
+                    <!-- Third row: same as the second row -->
+                    <div class="row">
+                        <label for="input11">\[Angle\]</label>
+                        {{ form.ang_v1 }}
+                        {{ form.ang_v2 }}
+                        {{ form.ang_v3}}
+                    </div>
+                    <!-- Fourth row: same as the second row -->
+                    <div class="row">
+                        <label for="input14">\[\mathfrak{Re}\{V_i\}\]</label>
+                        <div class="readonly-field re_v1">{{ output_values.re_v1 }}</div>
+                        <div class="readonly-field re_v2">{{ output_values.re_v2 }}</div>
+                        <div class="readonly-field re_v3">{{ output_values.re_v3 }}</div>
+                    </div>
+                    <!-- Fifth row: same as the second row -->
+                    <div class="row">
+                        <label for="input17">\[\mathfrak{Im}\{V_i\}\]</label>
+                        <div class="readonly-field im_v1">{{ output_values.im_v1 }}</div>
+                        <div class="readonly-field im_v2">{{ output_values.im_v2 }}</div>
+                        <div class="readonly-field im_v3">{{ output_values.im_v3 }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="column small">
+                <div class="section short">
+                    <div class="row">
+                        <label for="input3">\[I_2\]</label>
+                        {{ form.i2 }}
+                    </div>
+                    <div class="row">
+                        <label for="input4">\[I_3\]</label>
+                        {{ form.i3 }}
+                    </div>
+                </div>
+                <div class="section tall">
+                    <div class="row">
+                        <label for="input5">\[V_{knee}\]</label>
+                        {{ form.vknee }}
+                    </div>
+                    <div class="row">
+                        <label for="input6">\[V_{DC}\]</label>
+                        {{ form.vdc }}
+                    </div>
+                    <div class="row">
+                        <label for="input7">\[V_{min}\]</label>
+                        <div class="readonly-field vmin">{{ output_values.vmin }}</div>
+                    </div>
+                </div>
+            </div>
+            <!-- New section spanning both columns -->
+            <div class="section full-span">
+                <div class="row">
+                    <label for="input20">\[P_{out}\;[dB]\]</label>
+                    <div class="readonly-field pout">{{ output_values.pout }}</div>
+                    <label for="input21">\[\eta\;[\%]\]</label>
+                    <div class="readonly-field eta">{{ output_values.eta }}</div>
+                </div>
+            </div>
+        </div>
+        <!-- Plot Container -->
+        <div id="plot-container" class="graph1">
+            {% if plot_url %}
+            <img src="{{ plot_url }}" alt="Generated Plot"/>
+            {% else %}
+                <p class="text-muted">No plot available. Please enter a multiplier to see the plot.</p>
             {% endif %}
         </div>
 
-        <!-- Dropdown for selecting the output format (PNG or SVG) -->
-        <div class="mb-3">
-            <label for="id_format" class="form-label">Output Format:</label>
-            <select name="format" id="id_format" class="form-select" onchange="formatChanged()">
-                {% for value, display in form.format.field.choices %}
-                    <option value="{{ value }}" {% if form.format.value == value %}selected{% endif %}>{{ display }}</option>
-                {% endfor %}
-            </select>
+        <div id="plot-config" class="plotconfig">
+            <!-- Preset Selection Dropdown -->
+            <div class="dropdown-container">
+                <label for="id_preset">Select Preset:</label>
+                {{form.preset}}
+            </div>
+
+            <!-- Output Format Dropdown -->
+            <div class="dropdown-container">
+                <label for="format-select">Output Format:</label>
+                {{form.output_format}}
+            </div>
         </div>
     </form>
-
-    <h2 class="h5 mb-3">Plot:</h2>
-    <!-- Container for the plot; only this section will be updated -->
-    <div id="plot-container" class="p-4 bg-white rounded shadow-sm">
-        {% if plot_url %}
-            <img src="{{ plot_url }}" alt="Generated Plot" class="img-fluid rounded">
-        {% else %}
-            <p class="text-muted">No plot available. Please enter a multiplier to see the plot.</p>
-        {% endif %}
-    </div>
 
     <!-- Bootstrap JS (for potential Bootstrap components) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
