@@ -117,9 +117,8 @@ USE_L10N = False  # Disable localization of numbers based on locale
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
-PROJECT_DIR = Path(__file__).resolve().parent
-STATIC_ROOT = PROJECT_DIR / 'static'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'static'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
