@@ -11,7 +11,7 @@
   
 - **RF output analysis**: The program computes normalized dB values for RF output power, efficiency, and implied harmonic impedances.
   
-- **Interactive waveform modeling**: The user inputs parameters like bias current (`Ibias`), signal current (`Isig`), and harmonic voltage components to visualize the effects on power and efficiency. For example, increasing or adjusting knee voltage (`Vknee`) allows users to study the impact of device knee characteristics on the waveforms.
+- **Interactive waveform modeling**: The user inputs parameters like bias current (`IDC`), signal current (`I1`), and harmonic voltage components to visualize the effects on power and efficiency. For example, increasing or adjusting knee voltage (`Vknee`) allows users to study the impact of device knee characteristics on the waveforms.
   
 - **Harmonic exploration**: PAWaves allows exploration of second and third harmonic voltage conditions, simulating modes like Class F and Class J, with visual feedback via impedance plots to ensure voltage and current remain 90° apart to prevent negative resistance.
 
@@ -47,3 +47,6 @@ Then go to the ["Web" page](https://www.pythonanywhere.com/web_app_setup/) and h
 
 # Todos
 - [ ] Adjust to different screen sizes.
+
+### Contributing
+Thanks a lot to [@nikacvet](https://github.com/nikacvet) for all the help.
